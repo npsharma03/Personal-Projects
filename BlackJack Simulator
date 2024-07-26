@@ -1,0 +1,111 @@
+import random
+
+class Deck:
+    suits = ['Hearts', 'Diamonds', 'Spades', 'Clubs']
+    ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
+
+    def __init__(self):
+        self.cards = [Card(suit, rank) for suit in self.suits for rank in self.ranks]
+        self.shuffle()
+
+    def shuffle(self):
+        random.shuffle(self.cards)
+
+    def deal(self):
+        card = self.cards.pop()
+        print(f"Dealt card: {card}")
+        return card
+
+    def __repr__(self):
+        return f"Deck with {len(self.cards)} cards" 
+deck = Deck()
+print(deck)
+
+deck.shuffle()
+
+card1 = deck.deal()
+print(card1)
+
+class BlackjackHand:
+    def __init__(self):
+        self.cards = []
+
+    def add_card(self, card):
+        self.cards.append(card)
+
+    def calculate_value(self):
+        value = 0
+        ace_count = 0
+
+        for card in self.cards:
+            if card.rank in ['Jack', 'Queen', 'King']:
+                value += 10
+            elif card.rank == 'Ace':
+                ace_count += 1
+                value += 11
+            else:
+                value += int(card.rank)
+
+        while value > 21 and ace_count:
+            value -= 10
+            ace_count -= 1
+
+        return value
+
+    def __repr__(self):
+        return f'Hand with {len(self.cards)} cards: {self.cards} (value: {self.calculate_value()})'
+class BlackjackGame:
+    def __init__(self):
+        self.deck = Deck()
+        self.player_hand = BlackjackHand()
+        self.dealer_hand = BlackjackHand()
+
+    def deal_initial_cards(self):
+        for _ in range(2):
+            self.player_hand.add_card(self.deck.deal())
+            self.dealer_hand.add_card(self.deck.deal())
+
+    def player_hit(self):
+        self.player_hand.add_card(self.deck.deal())
+
+    def dealer_turn(self):
+        while self.dealer_hand.calculate_value() < 17:
+            self.dealer_hand.add_card(self.deck.deal())
+
+    def determine_winner(self):
+        player_value = self.player_hand.calculate_value()
+        dealer_value = self.dealer_hand.calculate_value()
+
+        if player_value > 21:
+            return "Dealer wins! Player busted."
+        elif dealer_value > 21:
+            return "Player wins! Dealer busted."
+        elif player_value > dealer_value:
+            return "Player wins!"
+        elif dealer_value > player_value:
+            return "Dealer wins!"
+        else:
+            return "It's a tie!"
+
+    def play_game(self):
+        self.deal_initial_cards()
+        print(f"Player's hand: {self.player_hand}")
+        print(f"Dealer's hand: [{self.dealer_hand.cards[0]}, Hidden]")
+
+        while True:
+            action = input("Do you want to hit or stand? (h/s): ")
+            if action.lower() == 'h':
+                self.player_hit()
+                print(f"Player's hand: {self.player_hand}")
+                if self.player_hand.calculate_value() > 21:
+                    break
+            else:
+                break
+
+        self.dealer_turn()
+        print(f"Dealer's hand: {self.dealer_hand}")
+        print(self.determine_winner()) 
+if __name__ == "__main__":
+    game = BlackjackGame()
+    game.play_game()
+
