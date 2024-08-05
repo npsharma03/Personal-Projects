@@ -1,0 +1,163 @@
+import pandas as pd 
+import numpy as np 
+%matplotlib inline
+import matplotlib.pyplot as plt
+plt.style.use('fivethirtyeight')
+import warnings
+
+warnings.simplefilter('ignore', FutureWarning)
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, roc_auc_score
+
+ufc_stats = pd.read_csv('ufc-fighters-statistics.csv')
+ufc_stats.head() 
+
+ufc_stats = ufc_stats.dropna()
+ufc_featherweights = ufc_stats.loc[(ufc_stats['weight_in_kg'] <= 65.9) & (ufc_stats['weight_in_kg'] > 64)]
+ufc_featherweights 
+
+epsilon = 0.9
+
+ufc_featherweights.loc[ufc_featherweights['losses']==0, 'losses'] = epsilon 
+
+win_loss_ratio = ufc_featherweights['wins']/ufc_featherweights['losses']
+
+undefeated_fighters = ufc_featherweights.loc[ufc_featherweights['losses'] == epsilon]
+#most_wins = ufc_featherweights['wins'].idxmax()
+#ufc_featherweights.loc[most_wins] 
+
+from sklearn.preprocessing import LabelEncoder
+ 
+featherweights_numerical = ufc_featherweights.copy()
+label_encoder = LabelEncoder()
+
+featherweights_numerical['stance_encoded'] = label_encoder.fit_transform(featherweights_numerical['stance'])
+featherweights_numerical['DOB_encoded'] = label_encoder.fit_transform(featherweights_numerical['date_of_birth'])
+featherweights_numerical.head()
+
+campeon = featherweights_numerical.loc[featherweights_numerical['name']=='Ilia Topuria']
+
+import seaborn as sns 
+
+
+pairplot_df = featherweights_numerical[['height_cm', 'reach_in_cm', 'stance_encoded', 'DOB_encoded']].copy()
+pairplot_df['win/loss'] = win_loss_ratio
+
+sns.pairplot(pairplot_df, diag_kind = 'kde')
+plt.show() 
+
+X = featherweights_numerical[['height_cm', 'reach_in_cm', 'stance_encoded', 'DOB_encoded']]
+y = win_loss_ratio 
+
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.3, random_state=42) 
+model1 = LinearRegression()
+model1.fit(X_train, y_train)
+
+y_pred = model1.predict(X_test) 
+
+r2_value = r2_score(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred) 
+
+print('R2 Score: ' f'{r2_value}')
+print('MSE: ' f'{mse}') 
+
+
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+
+X = featherweights_numerical[['height_cm', 'reach_in_cm', 'stance_encoded', 'DOB_encoded']]
+y = win_loss_ratio 
+
+scaler = StandardScaler() 
+X_scaled = scaler.fit_transform(X)
+
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size = 0.3, random_state=42) 
+model1 = LinearRegression()
+model1.fit(X_train, y_train)
+
+y_pred = model1.predict(X_test) 
+
+r2_value = r2_score(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred) 
+
+print('R2 Score: ' f'{r2_value}')
+print('MSE: ' f'{mse}') 
+
+
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import Normalization
+from tensorflow.keras import regularizers
+from tensorflow.keras.layers import Dropout
+
+
+X = featherweights_numerical[['height_cm', 'reach_in_cm', 'stance_encoded', 'DOB_encoded']]
+y = win_loss_ratio 
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size = 0.3, random_state=42) 
+
+model_2 = Sequential([  
+    Dense(256, activation='relu'),
+    Dropout(0.5),
+    Dense(128, activation='relu'),
+    Dropout(0.3),
+    Dense(64, activation='relu'),
+    Dense(1)
+]) 
+
+model_2.compile(
+    loss='mean_squared_error',
+    optimizer='RMSprop' 
+)
+
+history = model_2.fit(X_train, y_train, epochs=25, batch_size=64, validation_split=0.2) 
+
+loss_model2 = model_2.evaluate(X_test, y_test)
+print(f'Loss:{loss_model2}') 
+
+
+campeon_df = pd.DataFrame(campeon) 
+relevant_stats_topuria = campeon_df[['height_cm', 'reach_in_cm', 'stance_encoded', 'DOB_encoded']]
+
+topuria_array = np.array(relevant_stats_topuria)
+topuria_array_scaled = scaler.transform(topuria_array)
+
+
+topuria_predicted_win_loss_ratio = model_2.predict(topuria_array_scaled)
+#topuria_predicted_win_loss_ratio = (topuria_predicted_win_loss_ratio * std) + mean
+
+print(f'Predicted W/L Ratio:{topuria_predicted_win_loss_ratio[0][0]}') 
+
+topuria_real_ratio = campeon_df['wins']/campeon_df['losses']
+topuria_real_ratio 
+
+
+plt.plot(history.history['loss'], label='Train Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+plt.show 
+
+
+model_3 = Sequential([
+  normalizer, 
+  Dense(128, activation='relu'), 
+  Dense(64, activation='relu'),
+  Dense(1)
+])
+ 
+model_3.compile(
+  loss='mean_squared_error', 
+  optimizer='adam'
+) 
+
+history = model_3.fit(X_train, y_train, epochs=20, batch_size=32, validation_split=0.2) 
+
+loss_model2 = model_3.evaluate(X_test, y_test) 
+print(f'Loss: {loss}')
