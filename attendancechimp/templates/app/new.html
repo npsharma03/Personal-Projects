@@ -1,7 +1,7 @@
-<form action="http://127.0.0.1:8000/app/createUser/" method="post"> 
+<form action="http://127.0.0.1:8000/app/createUser/" method="post">
     {% csrf_token %}
-    <label for="Name">Name:</label>
-    <input type="text" id="Name" name="Name" required><br>
+    <label for="user_name">Name:</label>
+    <input type="text" id="user_name" name="user_name" required><br>
 
     <label for="University_Email">University Email:</label>
     <input type="email" id="University_Email" name="University_Email" required><br>
