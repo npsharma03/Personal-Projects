@@ -1,5 +1,6 @@
 <form action="http://127.0.0.1:8000/app/createUser/" method="post">
     {% csrf_token %}
+    
     <label for="user_name">Name:</label>
     <input type="text" id="user_name" name="user_name" required><br>
 
@@ -7,15 +8,19 @@
     <input type="email" id="University_Email" name="University_Email" required><br>
 
     <label for="student">Student:</label>
-    <input type="radio" id="student" name="role" value="student" required>
-    <label for="student">Student</label><br>
+    <input type="radio" id="student" name="role" value="student" required><br>
 
-    <label for="teacher">Instructor:</label>
-    <input type="radio" id="teacher" name="role" value="instructor" required>
-    <label for="teacher">Instructor</label><br>
+    <label for="teacher">Teacher:</label>
+    <input type="radio" id="teacher" name="role" value="teacher"><br>
+
+    <label for="is_student">Is Student:</label>
+    <input type="checkbox" id="is_student" name="is_student" value="true"><br>
+
+    <label for="is_staff">Is Staff:</label>
+    <input type="checkbox" id="is_staff" name="is_staff" value="true"><br>
 
     <label for="Password">Password:</label>
     <input type="password" id="Password" name="Password" required><br>
 
-    <input type="submit" value="Sign Up">
+    <button type="submit">Sign Up</button>
 </form>

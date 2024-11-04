@@ -10,6 +10,7 @@ urlpatterns = [
     path('sum/', views.sum_view),
     path('time/', views.time_view),
     path('new/', views.new),
+    path('createUser', views.createUser),
     path('createUser/', views.createUser),
     path('index.html', views.index_html)
 ]
