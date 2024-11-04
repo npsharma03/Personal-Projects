@@ -1,0 +1,18 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div style="text-align: center;">
+    <p>My name is Nikhil Sharma, and I am a fourth-year student.</p>
+    <p>I study Cognitive and data science, with a specialization in Machine Learning!</p>
+    {% if user.is_authenticated %}
+        <p>Hi, <strong><span style="background-color: yellow;">{{ user.username }}</span></strong>!</p>
+    {% else %}
+        <p>You are not logged in</p>
+        <a href="{% url 'login' %}">Log In</a>
+    {% endif %}
+    <p>Current time: {{ current_time }}</p>
+</div>
+{% endblock %}
