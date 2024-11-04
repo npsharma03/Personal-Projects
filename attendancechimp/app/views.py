@@ -1,5 +1,5 @@
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User  
@@ -96,8 +96,11 @@ def createUser(request):
         user.save()
 
         return HttpResponse("You have signed up successfully!")
+	
+    return HttpResponseBadRequest("Error: This endpoint only accepts POST requests.")
 
-    return HttpResponse("Error: This endpoint only accepts POST requests.")
+
+    #return HttpResponse("Error: This endpoint only accepts POST requests.")
 
 #from django.contrib.auth import authenticate, login
 #from django.contrib import messages
