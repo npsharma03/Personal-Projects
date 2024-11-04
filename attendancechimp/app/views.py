@@ -84,23 +84,27 @@ def createUser(request):
         role = request.POST.get('role')
         password = request.POST.get('Password')
 
+        if not all([name, email, password]):
+            return HttpResponseBadRequest("Error: Missing required fields.")
+
+
         if User.objects.filter(email=email).exists():
             return HttpResponse("Error: Email already exists. Please use a different email.")
 
-        user = User(
-            username=email,
-            email=email,
-            first_name=name,  
-            password=make_password(password) 
-        )
-        user.save()
+        try:
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                first_name=name,
+                password=password  
+            )
+            user.save()
+            return HttpResponse("You have signed up successfully!")
+        except Exception as e:
+            return HttpResponse(f"Error: {str(e)}") 
 
-        return HttpResponse("You have signed up successfully!")
-	
     return HttpResponseBadRequest("Error: This endpoint only accepts POST requests.")
 
-
-    #return HttpResponse("Error: This endpoint only accepts POST requests.")
 
 #from django.contrib.auth import authenticate, login
 #from django.contrib import messages
