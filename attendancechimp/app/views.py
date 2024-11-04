@@ -79,14 +79,12 @@ def new(request):
 @csrf_exempt
 def createUser(request):
     if request.method == "POST":
-        name = request.POST.get('Name')
-        email = request.POST.get('University_Email')
-        role = request.POST.get('role')
+        name = request.POST.get('user_name')  
+        email = request.POST.get('University_Email')  
         password = request.POST.get('Password')
 
         if not all([name, email, password]):
             return HttpResponseBadRequest("Error: Missing required fields.")
-
 
         if User.objects.filter(email=email).exists():
             return HttpResponse("Error: Email already exists. Please use a different email.")
@@ -101,10 +99,9 @@ def createUser(request):
             user.save()
             return HttpResponse("You have signed up successfully!")
         except Exception as e:
-            return HttpResponse(f"Error: {str(e)}") 
+            return HttpResponse(f"Error: {str(e)}")
 
     return HttpResponseBadRequest("Error: This endpoint only accepts POST requests.")
-
 
 #from django.contrib.auth import authenticate, login
 #from django.contrib import messages
