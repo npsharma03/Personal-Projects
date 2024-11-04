@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     path('handleform', views.handle_form, name='form'),
     #path('', views.index, name='index'),
-    path('', views.index_html, name='index'),
+    path('', views.index_html, name ='index'),
     path("dummypage/", views.dummypage, name="index"),
     path('sum/', views.sum_view),
     path('time/', views.time_view),
