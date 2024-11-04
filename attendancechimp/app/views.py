@@ -50,7 +50,8 @@ def index_html(request):
     utc_now = timezone.now()
     central_tz = pytz.timezone('America/Chicago')
     current_time = utc_now.astimezone(central_tz)
-    context = {'current_time': current_time.strftime('%Y-%m-%d %I:%M:%S %p')}
+    context = {'current_time': current_time.strftime('%Y-%m-%d %H:%M:%S')}
+    #context = {'current_time': current_time.strftime('%Y-%m-%d %I:%M:%S %p')}
     return render(request, 'app/index.html', context)
 
 
