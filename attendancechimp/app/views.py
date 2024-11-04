@@ -44,6 +44,7 @@ def time_view(request):
 def index(request):
     return render(request, 'app/index.html')
 
+
 @csrf_exempt
 def index_html(request):
     utc_now = timezone.now()
@@ -51,6 +52,8 @@ def index_html(request):
     current_time = utc_now.astimezone(central_tz)
     context = {'current_time': current_time.strftime('%Y-%m-%d %I:%M:%S %p')}
     return render(request, 'app/index.html', context)
+
+
 
 @csrf_exempt
 def handle_form(request):
